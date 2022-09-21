@@ -55,10 +55,15 @@ const categoryDetailService = async (categoryId) => {
   return beverageData;
 };
 
+const paymentService = async (userId, orderId) => {
+  await beverageDao.ModifyOrderStatus(orderId);
+  await beverageDao.ModifyUserPoint(userId, orderId);
+};
 module.exports = {
   detailService,
   categoryDetailService,
   OrderService,
   OrderToppingsService,
   orderDataService,
+  paymentService,
 };

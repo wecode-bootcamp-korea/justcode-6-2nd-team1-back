@@ -59,7 +59,7 @@ const createToppings = async (userId, beverageId, toppings) => {
 const getOrderData = async (userId, beverageId) => {
   const orderData = await myDataSource.query(
     `SELECT 
-      users.name, users.phone_number, shops.name,
+      orders.id as orderId,users.name, users.phone_number, shops.name,
       shops.address,orders.take_out,
       users.point,beverages.beverage_name,
       beverages.beverage_image,
@@ -94,10 +94,43 @@ const getBeverageDataById = async (categoryId) => {
   return beverageData;
 };
 
+const ModifyOrderStatus = async (orderId) => {
+  await myDataSource.query(
+    `UPDATE orders SET order_status_id = 3 WHERE id = ?
+    `,
+    [orderId]
+  );
+};
+
+const ModifyUserPoint = async (userId, orderId) => {
+  const [totalPrice] = await myDataSource.query(
+    `SELECT total_price as price 
+        FROM orders 
+        WHERE orders.id = ?
+    `,
+    [orderId]
+  );
+
+  const [point] = await myDataSource.query(
+    `SELECT point - ? as result 
+        FROM users 
+        WHERE id = ?
+    `,
+    [totalPrice.price, userId]
+  );
+
+  await myDataSource.query(
+    `UPDATE users SET point = ? WHERE id = ?
+    `,
+    [point.result, userId]
+  );
+};
 module.exports = {
   getDetailDataById,
   getBeverageDataById,
   createOrder,
   createToppings,
   getOrderData,
+  ModifyOrderStatus,
+  ModifyUserPoint,
 };

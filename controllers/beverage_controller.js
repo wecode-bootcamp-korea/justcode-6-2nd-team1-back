@@ -55,8 +55,20 @@ const categoryDetailcontroller = async (req, res) => {
   }
 };
 
+const paymentController = async (req, res) => {
+  const userId = req.userData.id;
+  const orderId = req.params.id;
+  try {
+    await beverageService.paymentService(userId, orderId);
+    res.status(200).json({ message: "completed Payment" });
+  } catch (err) {
+    console.log(err);
+    res.status(err.statusCode).json({ message: err.message });
+  }
+};
 module.exports = {
   detailController,
   categoryDetailcontroller,
   OrderController,
+  paymentController,
 };

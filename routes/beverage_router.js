@@ -10,4 +10,6 @@ router.get("/detail/:id", beverageController.detailController);
 
 router.post("/order/:id", validateToken, beverageController.OrderController);
 
+router.patch("/order/:id", validateToken, beverageController.paymentController);
+
 module.exports = router;
