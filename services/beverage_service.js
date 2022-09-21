@@ -7,10 +7,11 @@ const detailService = async (beverageId, userId) => {
 
   detailData.review_data = JSON.parse(detailData.review_data);
 
-  detailData.review_data.sort((a, b) => a.id - b.id);
-
-  console.log(detailData.review_data);
-
+  if (detailData.review_data) {
+    detailData.review_data.sort((a, b) => a.id - b.id);
+  } else if (!detailData.review) {
+    detailData.review_data == null;
+  }
   return detailData;
 };
 
