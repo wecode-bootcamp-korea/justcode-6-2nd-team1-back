@@ -22,4 +22,82 @@ const getDetailDataById = async (beverageId) => {
   return detailData;
 };
 
-module.exports = { getDetailDataById };
+const createOrder = async (
+  userId,
+  beverageId,
+  amount,
+  cold,
+  totalPrice,
+  takeOut,
+  sugar,
+  ice
+) => {
+  await myDataSource.query(
+    `INSERT INTO orders
+      (user_id,beverage_id,order_status_id,amount,sugar,ice,take_out,cold,total_price)
+     VALUES (?,?,2,?,?,?,?,?,?);
+    `,
+    [userId, beverageId, amount, sugar, ice, takeOut, cold, totalPrice]
+  );
+};
+
+const createToppings = async (userId, beverageId, toppings) => {
+  const [orderId] = await myDataSource.query(
+    `SELECT id from orders WHERE user_id = ? AND beverage_id = ? AND order_status_id = 2;
+    `,
+    [userId, beverageId]
+  );
+  await myDataSource.query(
+    `INSERT INTO 
+      topping_order (order_id,topping_id,amount) 
+     VALUES (?,?,?)
+    `,
+    [orderId.id, toppings.id, toppings.amount]
+  );
+};
+
+const getOrderData = async (userId, beverageId) => {
+  const orderData = await myDataSource.query(
+    `SELECT 
+      users.name, users.phone_number, shops.name,
+      shops.address,orders.take_out,
+      users.point,beverages.beverage_name,
+      beverages.beverage_image,
+      beverages.price,orders.amount,orders.cold, 
+      orders.sugar, 
+      orders.ice ,
+        (SELECT 
+          json_arrayagg(json_object("topping_id",topping_id,"amount",topping_order.amount))
+        FROM topping_order
+        JOIN orders ON orders.user_id = ? AND orders.beverage_id = ?
+        WHERE orders.id = topping_order.order_id) as toppingData,
+        orders.total_price
+    FROM orders
+    JOIN users ON orders.user_id = users.id
+    JOIN beverages ON orders.beverage_id = beverages.id
+    JOIN shops ON users.shop_location_id = shops.id
+    WHERE orders.user_id=? AND orders.beverage_id =? AND orders.order_status_id = 2;
+    `,
+    [userId, beverageId, userId, beverageId]
+  );
+  return orderData;
+};
+
+const getBeverageDataById = async (categoryId) => {
+  const beverageData = await myDataSource.query(
+    `SELECT id, beverage_name, beverage_image, price 
+      FROM beverages 
+      WHERE category_id = ?;
+    `,
+    [categoryId]
+  );
+  return beverageData;
+};
+
+module.exports = {
+  getDetailDataById,
+  getBeverageDataById,
+  createOrder,
+  createToppings,
+  getOrderData,
+};
