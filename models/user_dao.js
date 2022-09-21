@@ -33,7 +33,36 @@ const createUser = async (email, password, nickname, name, phoneNumber) => {
   );
   return;
 };
+
+const getUserById = async (userId) => {
+  const [userData] = await myDataSource.query(
+    `SELECT id FROM users WHERE id = ?
+    `,
+    [userId]
+  );
+  return userData;
+};
+
+const getUserByEmail = async (email) => {
+  const userData = await myDataSource.query(
+    `SELECT id, password FROM users WHERE email = ?`,
+    [email]
+  );
+  return userData;
+};
+
+const updateRefreshToken = async (email, refreshToken) => {
+  await myDataSource.query(
+    `
+    UPDATE users SET refresh_token = ? WHERE email = "?"
+    `,
+    [refreshToken, email]
+  );
+};
 module.exports = {
   getAccountData,
   createUser,
+  getUserById,
+  getUserByEmail,
+  updateRefreshToken,
 };

@@ -23,7 +23,13 @@ const accountCheck = async (req, res) => {
 const signUpController = async (req, res) => {
   let { email, password, nickname, name, phoneNumber } = req.body;
   try {
-    await userService.signUp(email, password, nickname, name, phoneNumber);
+    await userService.signUpService(
+      email,
+      password,
+      nickname,
+      name,
+      phoneNumber
+    );
 
     res.status(200).json({ message: "userCreated" });
   } catch (err) {
@@ -31,4 +37,16 @@ const signUpController = async (req, res) => {
     res.status(err.statusCode || 500).json(err.message);
   }
 };
-module.exports = { accountCheck, signUpController };
+
+const logInController = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const token = await userService.logInService(email, password);
+    res.status(201).json({ message: "Login Success", token });
+  } catch (err) {
+    console.log(err);
+    res.status(err.statusCode || 500).json({ message: err.message });
+  }
+};
+module.exports = { accountCheck, signUpController, logInController };
