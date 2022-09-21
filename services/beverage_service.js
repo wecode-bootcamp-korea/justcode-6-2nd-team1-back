@@ -1,7 +1,7 @@
 const beverageDao = require("../models/beverage_dao");
 
 const detailService = async (beverageId, userId) => {
-  const [detailData] = await beverageDao.getDetailDataById(beverageId, userId);
+  const [detailData] = await beverageDao.getDetailDataById(beverageId);
 
   detailData.nutrition_data = JSON.parse(detailData.nutrition_data);
 
