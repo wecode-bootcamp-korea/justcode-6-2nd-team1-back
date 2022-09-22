@@ -12,4 +12,8 @@ router.post("/order/:id", validateToken, beverageController.OrderController);
 
 router.patch("/order/:id", validateToken, beverageController.paymentController);
 
+router.post("/cart/:id", validateToken, beverageController.CartController);
+
+router.get("/cart", validateToken, beverageController.cartDataController);
+
 module.exports = router;

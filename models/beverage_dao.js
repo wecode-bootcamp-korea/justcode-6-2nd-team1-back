@@ -22,6 +22,17 @@ const getDetailDataById = async (beverageId) => {
   return detailData;
 };
 
+const getBeverageDataById = async (categoryId) => {
+  const beverageData = await myDataSource.query(
+    `SELECT id, beverage_name, beverage_image, price 
+      FROM beverages 
+      WHERE category_id = ?;
+    `,
+    [categoryId]
+  );
+  return beverageData;
+};
+
 const createOrder = async (
   userId,
   beverageId,
@@ -59,7 +70,7 @@ const createToppings = async (userId, beverageId, toppings) => {
 const getOrderData = async (userId, beverageId) => {
   const orderData = await myDataSource.query(
     `SELECT 
-      orders.id as orderId,users.name, users.phone_number, shops.name,
+      orders.id as orderId, users.name as userName, users.phone_number, shops.name as shopName,
       shops.address,orders.take_out,
       users.point,beverages.beverage_name,
       beverages.beverage_image,
@@ -81,17 +92,6 @@ const getOrderData = async (userId, beverageId) => {
     [userId, beverageId, userId, beverageId]
   );
   return orderData;
-};
-
-const getBeverageDataById = async (categoryId) => {
-  const beverageData = await myDataSource.query(
-    `SELECT id, beverage_name, beverage_image, price 
-      FROM beverages 
-      WHERE category_id = ?;
-    `,
-    [categoryId]
-  );
-  return beverageData;
 };
 
 const ModifyOrderStatus = async (orderId) => {
@@ -125,6 +125,67 @@ const ModifyUserPoint = async (userId, orderId) => {
     [point.result, userId]
   );
 };
+
+const createCart = async (
+  userId,
+  beverageId,
+  amount,
+  cold,
+  totalPrice,
+  takeOut,
+  sugar,
+  ice
+) => {
+  await myDataSource.query(
+    `INSERT INTO orders
+        (user_id,beverage_id,order_status_id,amount,sugar,ice,take_out,cold,total_price)
+       VALUES (?,?,1,?,?,?,?,?,?);
+      `,
+    [userId, beverageId, amount, sugar, ice, takeOut, cold, totalPrice]
+  );
+};
+
+const createCartToppings = async (userId, beverageId, toppings) => {
+  const [orderId] = await myDataSource.query(
+    // 같은 음료를 장바구니에 추가할 수도 있어서 토핑오더 테이블 구분을위해 오더바이
+    `SELECT id from orders WHERE user_id = ? AND beverage_id = ? AND order_status_id = 1
+     ORDER BY id desc limit 1;
+    `,
+    [userId, beverageId]
+  );
+  await myDataSource.query(
+    `INSERT INTO 
+      topping_order (order_id,topping_id,amount) 
+     VALUES (?,?,?)
+    `,
+    [orderId.id, toppings.id, toppings.amount]
+  );
+};
+
+const getCartDataByUserId = async (userId) => {
+  return await myDataSource.query(
+    `SELECT 
+      shops.name, orders.id as orderId,
+      beverages.beverage_image,
+      beverages.beverage_name,
+      beverages.price,
+      orders.cold,orders.sugar,orders.ice,
+      json_arrayagg(
+        json_object(
+          "topping_id",topping_id,"amount",topping_order.amount
+          )
+        ) as toppingData
+    FROM orders
+    JOIN users ON orders.user_id = users.id
+    JOIN shops ON users.shop_location_id = shops.id
+    JOIN beverages ON orders.beverage_id = beverages.id
+    JOIN topping_order ON orders.id = topping_order.order_id
+     WHERE orders.user_id = ? AND orders.order_status_id = 1
+     GROUP by order_id;
+    `,
+    [userId]
+  );
+};
 module.exports = {
   getDetailDataById,
   getBeverageDataById,
@@ -133,4 +194,7 @@ module.exports = {
   getOrderData,
   ModifyOrderStatus,
   ModifyUserPoint,
+  createCart,
+  createCartToppings,
+  getCartDataByUserId,
 };

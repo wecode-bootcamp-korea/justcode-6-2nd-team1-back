@@ -15,6 +15,11 @@ const detailService = async (beverageId) => {
   return detailData;
 };
 
+const categoryDetailService = async (categoryId) => {
+  const beverageData = await beverageDao.getBeverageDataById(categoryId);
+  return beverageData;
+};
+
 const OrderService = async (
   userId,
   beverageId,
@@ -50,14 +55,45 @@ const orderDataService = async (userId, beverageId) => {
   return orderData;
 };
 
-const categoryDetailService = async (categoryId) => {
-  const beverageData = await beverageDao.getBeverageDataById(categoryId);
-  return beverageData;
-};
-
 const paymentService = async (userId, orderId) => {
   await beverageDao.ModifyOrderStatus(orderId);
   await beverageDao.ModifyUserPoint(userId, orderId);
+};
+
+const CartService = async (
+  userId,
+  beverageId,
+  amount,
+  cold,
+  totalPrice,
+  takeOut,
+  sugar,
+  ice
+) => {
+  await beverageDao.createCart(
+    userId,
+    beverageId,
+    amount,
+    cold,
+    totalPrice,
+    takeOut,
+    sugar,
+    ice
+  );
+};
+
+const CartToppingService = async (userId, beverageId, toppings) => {
+  for (let i = 0; i < toppings.length; i++) {
+    await beverageDao.createCartToppings(userId, beverageId, toppings[i]);
+  }
+};
+
+const cartDataService = async (userId) => {
+  const cartData = await beverageDao.getCartDataByUserId(userId);
+  cartData.map((data) => {
+    data.toppingData = JSON.parse(data.toppingData);
+  });
+  return cartData;
 };
 module.exports = {
   detailService,
@@ -66,4 +102,7 @@ module.exports = {
   OrderToppingsService,
   orderDataService,
   paymentService,
+  CartService,
+  CartToppingService,
+  cartDataService,
 };
