@@ -16,4 +16,16 @@ router.post("/cart/:id", validateToken, beverageController.CartController);
 
 router.get("/cart", validateToken, beverageController.cartDataController);
 
+router.patch(
+  "/cart/:id/:amount",
+  validateToken,
+  beverageController.cartModifyController
+);
+
+router.delete(
+  "/cart/:id",
+  validateToken,
+  beverageController.cartDeleteController
+);
+
 module.exports = router;

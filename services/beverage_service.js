@@ -95,6 +95,14 @@ const cartDataService = async (userId) => {
   });
   return cartData;
 };
+
+const cartModifyService = async (userId, orderId, amount) => {
+  await beverageDao.modifyCart(userId, orderId, amount);
+};
+
+const cartDeleteService = async (userId, orderId) => {
+  await beverageDao.deleteCart(userId, orderId);
+};
 module.exports = {
   detailService,
   categoryDetailService,
@@ -105,4 +113,6 @@ module.exports = {
   CartService,
   CartToppingService,
   cartDataService,
+  cartModifyService,
+  cartDeleteService,
 };

@@ -168,7 +168,7 @@ const getCartDataByUserId = async (userId) => {
       shops.name, orders.id as orderId,
       beverages.beverage_image,
       beverages.beverage_name,
-      beverages.price,
+      beverages.price,orders.amount as orderAmount,
       orders.cold,orders.sugar,orders.ice,
       json_arrayagg(
         json_object(
@@ -186,6 +186,23 @@ const getCartDataByUserId = async (userId) => {
     [userId]
   );
 };
+
+const modifyCart = async (userId, orderId, amount) => {
+  await myDataSource.query(
+    `UPDATE orders SET amount = ? WHERE id = ? AND user_id = ?;
+    `,
+    [amount, orderId, userId]
+  );
+};
+
+const deleteCart = async (userId, orderId) => {
+  await myDataSource.query(
+    `DELETE FROM orders 
+    WHERE orders.id = ? AND user_id = ? AND order_status_id = 1;
+    `,
+    [orderId, userId]
+  );
+};
 module.exports = {
   getDetailDataById,
   getBeverageDataById,
@@ -197,4 +214,6 @@ module.exports = {
   createCart,
   createCartToppings,
   getCartDataByUserId,
+  modifyCart,
+  deleteCart,
 };
