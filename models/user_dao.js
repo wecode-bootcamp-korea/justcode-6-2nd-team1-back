@@ -27,7 +27,7 @@ const createUser = async (email, password, nickname, name, phoneNumber) => {
       name,
       phone_number,
       point
-    ) VALUES (?,?,?,?,?,10000);
+    ) VALUES (?,?,?,?,?,30000);
     `,
     [email, password, nickname, name, phoneNumber]
   );
