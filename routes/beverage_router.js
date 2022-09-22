@@ -28,4 +28,11 @@ router.delete(
   beverageController.cartDeleteController
 );
 
+router.get("/cartOrder", validateToken, beverageController.cartOrderController);
+router.patch(
+  "/cartOrder",
+  validateToken,
+  beverageController.cartOrderPaymentController
+);
+
 module.exports = router;

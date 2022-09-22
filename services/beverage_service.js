@@ -50,7 +50,6 @@ const OrderToppingsService = async (userId, beverageId, toppings) => {
 
 const orderDataService = async (userId, beverageId) => {
   const [orderData] = await beverageDao.getOrderData(userId, beverageId);
-  console.log(orderData);
   orderData.toppingData = JSON.parse(orderData.toppingData);
   return orderData;
 };
@@ -103,6 +102,29 @@ const cartModifyService = async (userId, orderId, amount) => {
 const cartDeleteService = async (userId, orderId) => {
   await beverageDao.deleteCart(userId, orderId);
 };
+
+const cartOrderService = async (userId) => {
+  await beverageDao.ModifyCartOrderStatusByUserId(userId);
+  const [userData] = await beverageDao.getCartUserDataByUserId(userId);
+  const beverageData = await beverageDao.getBeverageDataByUserId(userId);
+  const [totalPrice] = await beverageDao.getTotalPriceByUserId(userId);
+  beverageData.map((data) => {
+    data.toppingData = JSON.parse(data.toppingData);
+  });
+  userData.beverageData = beverageData;
+  userData.totalPrice = totalPrice.totalPrice;
+  return userData;
+};
+
+const cartOrderPaymentService = async (userId, orderId) => {
+  const [totalPrice] = await beverageDao.getTotalPrice(userId);
+
+  for (let i in orderId) {
+    await beverageDao.ModifyOrderStatus(orderId[i].id);
+  }
+
+  await beverageDao.ModifyCartorderUserPoint(userId, totalPrice.totalPrice);
+};
 module.exports = {
   detailService,
   categoryDetailService,
@@ -115,4 +137,6 @@ module.exports = {
   cartDataService,
   cartModifyService,
   cartDeleteService,
+  cartOrderService,
+  cartOrderPaymentService,
 };

@@ -128,6 +128,29 @@ const cartDeleteController = async (req, res) => {
     res.status(err.statusCode).json({ message: err.message });
   }
 };
+
+const cartOrderController = async (req, res) => {
+  const userId = req.userData.id;
+  try {
+    const orderData = await beverageService.cartOrderService(userId);
+    res.status(200).json({ orderData });
+  } catch (err) {
+    console.log(err);
+    res.status(err.statusCode).json({ message: err.message });
+  }
+};
+
+const cartOrderPaymentController = async (req, res) => {
+  const userId = req.userData.id;
+  const orderId = req.body;
+  try {
+    await beverageService.cartOrderPaymentService(userId, orderId);
+    res.status(200).json({ message: "completed payment" });
+  } catch (err) {
+    console.log(err);
+    res.status(err.statusCode).json({ message: err.message });
+  }
+};
 module.exports = {
   detailController,
   categoryDetailcontroller,
@@ -137,4 +160,6 @@ module.exports = {
   cartDataController,
   cartModifyController,
   cartDeleteController,
+  cartOrderController,
+  cartOrderPaymentController,
 };
