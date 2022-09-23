@@ -23,15 +23,23 @@ const cartService = async (
 };
 
 const cartToppingService = async (userId, beverageId, toppings) => {
-  for (let i = 0; i < toppings.length; i++) {
-    await cartDao.createCartToppings(userId, beverageId, toppings[i]);
+  if (!toppings) {
+    await cartDao.createCartNullToppings(userId, beverageId);
+  } else {
+    for (let i = 0; i < toppings.length; i++) {
+      await cartDao.createCartToppings(userId, beverageId, toppings[i]);
+    }
   }
 };
 
 const cartDataService = async (userId) => {
-  const cartData = await cartDao.getCartDataByUserId(userId);
+  let cartData = await cartDao.getCartDataByUserId(userId);
   cartData.map((data) => {
-    data.toppingData = JSON.parse(data.toppingData);
+    const parsedData = JSON.parse(data.toppingData);
+    data.toppingData = parsedData;
+    if (!parsedData[0].topping_id) {
+      data.toppingData = null;
+    }
   });
   return cartData;
 };

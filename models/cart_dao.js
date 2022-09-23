@@ -19,9 +19,27 @@ const createCart = async (
   );
 };
 
+const createCartNullToppings = async (userId, beverageId) => {
+  const [orderId] = await myDataSource.query(
+    // 같은 음료(다른토핑)를 장바구니에 추가할 수도 있어서 토핑오더 테이블 구분을위해 오더바이
+    `SELECT id from orders WHERE user_id = ? AND beverage_id = ? AND order_status_id = 1
+     ORDER BY id desc limit 1;
+    `,
+    [userId, beverageId]
+  );
+
+  await myDataSource.query(
+    `INSERT INTO 
+      topping_order (order_id) 
+     VALUES (?)
+    `,
+    [orderId.id]
+  );
+};
+
 const createCartToppings = async (userId, beverageId, toppings) => {
   const [orderId] = await myDataSource.query(
-    // 같은 음료를 장바구니에 추가할 수도 있어서 토핑오더 테이블 구분을위해 오더바이
+    // 같은 음료(다른토핑)를 장바구니에 추가할 수도 있어서 토핑오더 테이블 구분을위해 오더바이
     `SELECT id from orders WHERE user_id = ? AND beverage_id = ? AND order_status_id = 1
      ORDER BY id desc limit 1;
     `,
@@ -84,4 +102,5 @@ module.exports = {
   getCartDataByUserId,
   modifyCart,
   deleteCart,
+  createCartNullToppings,
 };

@@ -48,17 +48,7 @@ const getBeverageDataByUserId = async (userId) => {
   );
 };
 
-const getTotalPriceByUserId = async (userId) => {
-  return await myDataSource.query(
-    `SELECT SUM(total_price) as totalPrice 
-      FROM orders 
-      WHERE user_id = ? AND order_status_id = 2;
-    `,
-    [userId]
-  );
-};
-
-const getTotalPrice = async (userId, orderId) => {
+const getCartTotalPrice = async (userId) => {
   return await myDataSource.query(
     `SELECT SUM(total_price) as totalPrice
       FROM orders
@@ -77,7 +67,11 @@ const modifyCartOrderUserPoint = async (userId, totalPrice) => {
     `,
     [totalPrice, userId]
   );
-
+  if (point.result < totalPrice) {
+    const err = new Error("point not enough");
+    err.statusCode = 400;
+    throw err;
+  }
   await myDataSource.query(
     `UPDATE users SET point = ? WHERE id = ?
     `,
@@ -89,7 +83,6 @@ module.exports = {
   modifyCartOrderStatusByUserId,
   getCartUserDataByUserId,
   getBeverageDataByUserId,
-  getTotalPriceByUserId,
-  getTotalPrice,
+  getCartTotalPrice,
   modifyCartOrderUserPoint,
 };

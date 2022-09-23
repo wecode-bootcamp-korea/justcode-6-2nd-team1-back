@@ -103,14 +103,6 @@ const getOrderData = async (userId, beverageId) => {
   return orderData;
 };
 
-const modifyOrderStatus = async (orderId) => {
-  await myDataSource.query(
-    `UPDATE orders SET order_status_id = 3 WHERE id = ?
-    `,
-    [orderId]
-  );
-};
-
 const modifyUserPoint = async (userId, orderId) => {
   const [totalPrice] = await myDataSource.query(
     `SELECT total_price as price 
@@ -128,10 +120,23 @@ const modifyUserPoint = async (userId, orderId) => {
     [totalPrice.price, userId]
   );
 
+  if (totalPrice.price > point.result) {
+    const err = new Error("point is not enough");
+    err.statusCode = 400;
+    throw err;
+  }
   await myDataSource.query(
     `UPDATE users SET point = ? WHERE id = ?
     `,
     [point.result, userId]
+  );
+};
+
+const modifyOrderStatus = async (orderId) => {
+  await myDataSource.query(
+    `UPDATE orders SET order_status_id = 3 WHERE id = ?
+    `,
+    [orderId]
   );
 };
 

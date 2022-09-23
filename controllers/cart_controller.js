@@ -5,20 +5,36 @@ const cartController = async (req, res) => {
   const beverageId = req.params.id;
   const { amount, cold, totalPrice, takeOut, sugar, ice, toppings } = req.body;
   try {
-    await cartService.cartService(
-      userId,
-      beverageId,
-      amount,
-      cold,
-      totalPrice,
-      takeOut,
-      sugar,
-      ice
-    );
+    if (!toppings) {
+      await cartService.cartService(
+        userId,
+        beverageId,
+        amount,
+        cold,
+        totalPrice,
+        takeOut,
+        sugar,
+        ice
+      );
 
-    await cartService.cartToppingService(userId, beverageId, toppings);
+      await cartService.cartToppingService(userId, beverageId, toppings);
 
-    res.status(200).json({ message: "Added cart" });
+      res.status(200).json({ message: "Added cart" });
+    } else {
+      await cartService.cartService(
+        userId,
+        beverageId,
+        amount,
+        cold,
+        totalPrice,
+        takeOut,
+        sugar,
+        ice
+      );
+
+      await cartService.cartToppingService(userId, beverageId, toppings);
+      res.status(200).json({ message: "Added cart" });
+    }
   } catch (err) {
     console.log(err);
     res.status(err.statusCode).json({ message: err.message });

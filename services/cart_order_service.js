@@ -5,9 +5,13 @@ const cartOrderService = async (userId) => {
   await cartOrderDao.modifyCartOrderStatusByUserId(userId);
   const [userData] = await cartOrderDao.getCartUserDataByUserId(userId);
   const beverageData = await cartOrderDao.getBeverageDataByUserId(userId);
-  const [totalPrice] = await cartOrderDao.getTotalPriceByUserId(userId);
+  const [totalPrice] = await cartOrderDao.getCartTotalPrice(userId);
   beverageData.map((data) => {
-    data.toppingData = JSON.parse(data.toppingData);
+    const parsedData = JSON.parse(data.toppingData);
+    data.toppingData = parsedData;
+    if (!parsedData[0].topping_id) {
+      data.toppingData = null;
+    }
   });
   userData.beverageData = beverageData;
   userData.totalPrice = totalPrice.totalPrice;
@@ -15,13 +19,13 @@ const cartOrderService = async (userId) => {
 };
 
 const cartOrderPaymentService = async (userId, orderId) => {
-  const [totalPrice] = await cartOrderDao.getTotalPrice(userId);
+  const [totalPrice] = await cartOrderDao.getCartTotalPrice(userId);
+
+  await cartOrderDao.modifyCartOrderUserPoint(userId, totalPrice.totalPrice);
 
   for (let i in orderId) {
     await orderDao.modifyOrderStatus(orderId[i].id);
   }
-
-  await cartOrderDao.modifyCartOrderUserPoint(userId, totalPrice.totalPrice);
 };
 
 module.exports = {

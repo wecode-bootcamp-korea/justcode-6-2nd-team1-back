@@ -49,8 +49,8 @@ const orderDataService = async (userId, beverageId) => {
 };
 
 const paymentService = async (userId, orderId) => {
-  await orderDao.modifyOrderStatus(orderId);
   await orderDao.modifyUserPoint(userId, orderId);
+  await orderDao.modifyOrderStatus(orderId);
 };
 
 module.exports = {
