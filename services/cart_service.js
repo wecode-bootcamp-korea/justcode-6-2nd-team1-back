@@ -38,7 +38,7 @@ const cartDataService = async (userId) => {
     const parsedData = JSON.parse(data.toppingData);
     data.toppingData = parsedData;
     if (!parsedData[0].topping_id) {
-      data.toppingData = null;
+      data.toppingData = [];
     }
   });
   return cartData;

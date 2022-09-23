@@ -10,7 +10,7 @@ const detailService = async (beverageId) => {
   if (detailData.review_data) {
     detailData.review_data.sort((a, b) => a.id - b.id);
   } else if (!detailData.review) {
-    detailData.review_data == null;
+    detailData.review_data = [];
   }
   return detailData;
 };

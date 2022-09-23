@@ -37,7 +37,7 @@ const orderDataWithOutToppingService = async (userId, beverageId) => {
     beverageId
   );
   if (!orderData.toppingData.topping_id) {
-    orderData.toppingData = null;
+    orderData.toppingData = [];
   }
   return orderData;
 };
