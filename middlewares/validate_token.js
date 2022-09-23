@@ -10,6 +10,7 @@ const validateToken = async (req, res, next) => {
       res.status(400).json({ message: "token is not provided" });
       return;
     }
+
     const userId = AccessTokenCheck.userId;
     const userData = await userDao.getUserById(userId);
     if (!userData) {
@@ -20,7 +21,8 @@ const validateToken = async (req, res, next) => {
     next();
   } catch (err) {
     console.log(err);
-    res.status(err.statusCode).json({ message: err.message });
+    res.status(404);
+    res.json({ message: err.message });
   }
 };
 
