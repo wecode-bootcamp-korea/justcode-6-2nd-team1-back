@@ -3,6 +3,7 @@ const beverageController = require("../controllers/beverage_controller");
 const orderController = require("../controllers/order_controller");
 const cartController = require("../controllers/cart_controller");
 const cartOrderController = require("../controllers/cart_order_controller");
+const reviewController = require("../controllers/review_controller");
 const { validateToken } = require("../middlewares/validate_token");
 
 const router = express.Router();
@@ -32,10 +33,21 @@ router.get(
   validateToken,
   cartOrderController.cartOrderController
 );
+
 router.patch(
   "/cartOrder",
   validateToken,
   cartOrderController.cartOrderPaymentController
+);
+
+router.post("/review/:id", validateToken, reviewController.reviewController);
+
+router.get("/review/:id", reviewController.GetReviewController);
+
+router.delete(
+  "/review/:id",
+  validateToken,
+  reviewController.deleteReviewController
 );
 
 module.exports = router;
