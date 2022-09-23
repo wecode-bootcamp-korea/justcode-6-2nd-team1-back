@@ -11,7 +11,7 @@ const getAccountData = async (email) => {
   if (!emailData) {
     return;
   } else if (emailData.email === email) {
-    const error = new Error("already exist account");
+    const error = new Error(0);
     error.statusCode = 400;
     throw error;
   }

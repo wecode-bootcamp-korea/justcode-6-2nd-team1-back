@@ -13,7 +13,7 @@ const accountCheck = async (req, res) => {
   }
   try {
     await userService.accountCheck(email);
-    res.status(200).json({ message: "signUp available" });
+    res.status(200).json("1");
   } catch (error) {
     console.log(error);
     res.status(error.statusCode || 500).json(error.message);
