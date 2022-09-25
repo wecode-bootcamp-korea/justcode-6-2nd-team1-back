@@ -120,6 +120,12 @@ const modifyUserPoint = async (userId, orderId) => {
     [totalPrice.price, userId]
   );
   if (totalPrice.price > point.result) {
+    await myDataSource.query(
+      `DELETE FROM orders WHERE orders.id = ?;
+      `,
+      [orderId]
+    );
+
     const err = new Error("point is not enough");
     err.statusCode = 400;
     throw err;
