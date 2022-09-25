@@ -25,7 +25,19 @@ const categoryDetailcontroller = async (req, res) => {
   }
 };
 
+const searchController = async (req, res) => {
+  const keyword = req.query.keyword;
+  try {
+    const result = await beverageService.searchService(keyword);
+    res.status(200).json(result);
+  } catch (err) {
+    console.log(err);
+    res.status(err.statusCode).json(err.message);
+  }
+};
+
 module.exports = {
   detailController,
   categoryDetailcontroller,
+  searchController,
 };

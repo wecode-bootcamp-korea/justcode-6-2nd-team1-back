@@ -4,7 +4,6 @@ const orderController = require("../controllers/order_controller");
 const cartController = require("../controllers/cart_controller");
 const cartOrderController = require("../controllers/cart_order_controller");
 const reviewController = require("../controllers/review_controller");
-const searchController = require("../controllers/search_controller");
 
 const { validateToken } = require("../middlewares/validate_token");
 
@@ -13,6 +12,8 @@ const router = express.Router();
 router.get("/category/:id", beverageController.categoryDetailcontroller);
 
 router.get("/detail/:id", beverageController.detailController);
+
+router.get("/search", beverageController.searchController);
 
 router.post("/order/:id", validateToken, orderController.orderController);
 
@@ -57,7 +58,5 @@ router.patch(
   validateToken,
   orderController.orderCancelController
 );
-
-router.get("/search", searchController.searchController);
 
 module.exports = router;

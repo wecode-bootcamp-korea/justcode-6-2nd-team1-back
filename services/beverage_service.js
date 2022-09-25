@@ -20,7 +20,12 @@ const categoryDetailService = async (categoryId) => {
   return beverageData;
 };
 
+const searchService = async (keyword) => {
+  return await beverageDao.getBeverageData(keyword);
+};
+
 module.exports = {
   detailService,
   categoryDetailService,
+  searchService,
 };
