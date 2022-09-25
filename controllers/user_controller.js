@@ -49,4 +49,22 @@ const logInController = async (req, res) => {
     res.status(err.statusCode || 500).json({ message: err.message });
   }
 };
-module.exports = { accountCheck, signUpController, logInController };
+
+const userLocationController = async (req, res) => {
+  const userId = req.userData.id;
+  const locationId = req.params.id;
+
+  try {
+    await userService.userLocationService(userId, locationId);
+    res.status(200).json({ message: "success" });
+  } catch (err) {
+    console.log(err);
+    res.status(err.statusCode).json(err.message);
+  }
+};
+module.exports = {
+  accountCheck,
+  signUpController,
+  logInController,
+  userLocationController,
+};

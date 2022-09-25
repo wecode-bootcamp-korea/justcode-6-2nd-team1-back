@@ -30,4 +30,13 @@ const logInService = async (email, password) => {
   }
 };
 
-module.exports = { accountCheck, signUpService, logInService };
+const userLocationService = async (userId, locationId) => {
+  await userDao.ModifyUserLocation(userId, locationId);
+};
+
+module.exports = {
+  accountCheck,
+  signUpService,
+  logInService,
+  userLocationService,
+};

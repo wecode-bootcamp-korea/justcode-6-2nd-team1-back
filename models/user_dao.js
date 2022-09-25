@@ -59,10 +59,21 @@ const updateRefreshToken = async (email, refreshToken) => {
     [refreshToken, email]
   );
 };
+
+const ModifyUserLocation = async (userId, locationId) => {
+  await myDataSource.query(
+    `UPDATE users 
+     SET shop_location_id = ? 
+     WHERE id = ?
+    `,
+    [locationId, userId]
+  );
+};
 module.exports = {
   getAccountData,
   createUser,
   getUserById,
   getUserByEmail,
   updateRefreshToken,
+  ModifyUserLocation,
 };

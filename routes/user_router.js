@@ -13,5 +13,10 @@ router.get(
   validateToken,
   orderListController.orderListController
 );
+router.patch(
+  "/user_location/:id",
+  validateToken,
+  userController.userLocationController
+);
 
 module.exports = router;
