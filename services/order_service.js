@@ -54,7 +54,7 @@ const paymentService = async (userId, orderId) => {
 };
 
 const orderCancelService = async (userId, orderId) => {
-  await orderDao.DeleteOrder(userId, orderId);
+  await orderDao.modifyCancelOrder(userId, orderId);
 };
 
 module.exports = {

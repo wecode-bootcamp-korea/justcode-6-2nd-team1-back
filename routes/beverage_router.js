@@ -51,8 +51,8 @@ router.delete(
   reviewController.deleteReviewController
 );
 
-router.delete(
-  "/order/:id",
+router.patch(
+  "/order_cancel/:id",
   validateToken,
   orderController.orderCancelController
 );

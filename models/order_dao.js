@@ -119,7 +119,6 @@ const modifyUserPoint = async (userId, orderId) => {
     `,
     [totalPrice.price, userId]
   );
-
   if (totalPrice.price > point.result) {
     const err = new Error("point is not enough");
     err.statusCode = 400;
@@ -140,7 +139,7 @@ const modifyOrderStatus = async (orderId) => {
   );
 };
 
-const DeleteOrder = async (userId, orderId) => {
+const modifyCancelOrder = async (userId, orderId) => {
   const [refundPoint] = await myDataSource.query(
     `SELECT total_price FROM orders 
      WHERE user_id = ? 
@@ -163,10 +162,11 @@ const DeleteOrder = async (userId, orderId) => {
   );
 
   await myDataSource.query(
-    `DELETE FROM orders 
-     WHERE orders.user_id = ? AND orders.id = ?;
+    `UPDATE orders 
+     SET orders.order_status_id = 4 
+     WHERE orders.id = ?
     `,
-    [userId, orderId]
+    [orderId]
   );
 };
 
@@ -178,5 +178,5 @@ module.exports = {
   getOrderData,
   modifyOrderStatus,
   modifyUserPoint,
-  DeleteOrder,
+  modifyCancelOrder,
 };
