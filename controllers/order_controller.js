@@ -57,7 +57,21 @@ const paymentController = async (req, res) => {
   }
 };
 
+const orderCancelController = async (req, res) => {
+  const userId = req.userData.id;
+  const orderId = req.params.id;
+
+  try {
+    await orderService.orderCancelService(userId, orderId);
+    res.status(200).json({ message: "cancel completed" });
+  } catch (err) {
+    console.log(err);
+    res.status(err.statusCode).json(err.message);
+  }
+};
+
 module.exports = {
   orderController,
   paymentController,
+  orderCancelController,
 };

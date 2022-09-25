@@ -51,4 +51,10 @@ router.delete(
   reviewController.deleteReviewController
 );
 
+router.delete(
+  "/order/:id",
+  validateToken,
+  orderController.orderCancelController
+);
+
 module.exports = router;

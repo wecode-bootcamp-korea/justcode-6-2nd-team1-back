@@ -140,6 +140,36 @@ const modifyOrderStatus = async (orderId) => {
   );
 };
 
+const DeleteOrder = async (userId, orderId) => {
+  const [refundPoint] = await myDataSource.query(
+    `SELECT total_price FROM orders 
+     WHERE user_id = ? 
+     AND orders.id = ?;
+    `,
+    [userId, orderId]
+  );
+
+  const [resultPoint] = await myDataSource.query(
+    `SELECT point + ? as result FROM users WHERE users.id = ?;
+    `,
+    [refundPoint.total_price, userId]
+  );
+
+  await myDataSource.query(
+    `UPDATE users 
+     SET point = ? WHERE id = ?;
+    `,
+    [resultPoint.result, userId]
+  );
+
+  await myDataSource.query(
+    `DELETE FROM orders 
+     WHERE orders.user_id = ? AND orders.id = ?;
+    `,
+    [userId, orderId]
+  );
+};
+
 module.exports = {
   createOrder,
   createToppings,
@@ -148,4 +178,5 @@ module.exports = {
   getOrderData,
   modifyOrderStatus,
   modifyUserPoint,
+  DeleteOrder,
 };
