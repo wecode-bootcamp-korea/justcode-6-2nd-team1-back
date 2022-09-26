@@ -21,7 +21,7 @@ const cartOrderService = async (userId, orderId) => {
 };
 
 const cartOrderPaymentService = async (userId, orderId) => {
-  await cartOrderDao.modifyCartOrderUserPoint(userId);
+  await cartOrderDao.modifyCartOrderUserPoint(userId, orderId);
 
   for (let i in orderId) {
     await orderDao.modifyOrderStatus(orderId[i].id);

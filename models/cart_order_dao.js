@@ -56,7 +56,7 @@ const getCartTotalPrice = async (userId) => {
   );
 };
 
-const modifyCartOrderUserPoint = async (userId) => {
+const modifyCartOrderUserPoint = async (userId, orderId) => {
   const [totalPrice] = await myDataSource.query(
     `SELECT SUM(total_price) as totalPrice
       FROM orders
@@ -70,8 +70,14 @@ const modifyCartOrderUserPoint = async (userId) => {
     `,
     [userId]
   );
-
   if (userPoint.point < totalPrice.totalPrice) {
+    for (let i in orderId)
+      await myDataSource.query(
+        `DELETE FROM orders WHERE orders.id = ?;
+        `,
+        [orderId[i].id]
+      );
+
     const err = new Error("point not enough");
     err.statusCode = 400;
     throw err;

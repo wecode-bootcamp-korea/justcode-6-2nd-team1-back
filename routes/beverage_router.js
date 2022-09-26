@@ -31,7 +31,7 @@ router.patch(
 
 router.delete("/cart/:id", validateToken, cartController.cartDeleteController);
 
-router.get(
+router.post(
   "/cartOrder",
   validateToken,
   cartOrderController.cartOrderController
