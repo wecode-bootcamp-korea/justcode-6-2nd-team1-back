@@ -4,12 +4,6 @@ const cartOrderController = async (req, res) => {
   const userId = req.userData.id;
   const orderId = req.body;
   try {
-    // orderId.map((data) => {
-    //   if (!data.id) {
-    //     res.status(400).json({ message: "invalid orderId" });
-    //     return;
-    //   }
-    // });
     const orderData = await cartOrderService.cartOrderService(userId, orderId);
     res.status(200).json({ orderData });
   } catch (err) {

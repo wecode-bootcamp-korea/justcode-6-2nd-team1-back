@@ -18,10 +18,4 @@ myDataSource
     console.error("Database initiate fail", err);
   });
 
-const deleteOrder = async (orderId) => {
-  await myDataSource.query(
-    `DELETE FROM orders WHERE orders.id = ?;
-      `
-  );
-};
-module.exports = { myDataSource, deleteOrder };
+module.exports = { myDataSource };
