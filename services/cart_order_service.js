@@ -1,8 +1,10 @@
 const cartOrderDao = require("../models/cart_order_dao");
 const orderDao = require("../models/order_dao");
 
-const cartOrderService = async (userId) => {
-  await cartOrderDao.modifyCartOrderStatusByUserId(userId);
+const cartOrderService = async (userId, orderId) => {
+  for (let i in orderId) {
+    await cartOrderDao.modifyCartOrderStatusByOrderId(orderId[i]);
+  }
   const [userData] = await cartOrderDao.getCartUserDataByUserId(userId);
   const beverageData = await cartOrderDao.getBeverageDataByUserId(userId);
   const [totalPrice] = await cartOrderDao.getCartTotalPrice(userId);
@@ -19,9 +21,7 @@ const cartOrderService = async (userId) => {
 };
 
 const cartOrderPaymentService = async (userId, orderId) => {
-  const [totalPrice] = await cartOrderDao.getCartTotalPrice(userId);
-
-  await cartOrderDao.modifyCartOrderUserPoint(userId, totalPrice.totalPrice);
+  await cartOrderDao.modifyCartOrderUserPoint(userId);
 
   for (let i in orderId) {
     await orderDao.modifyOrderStatus(orderId[i].id);

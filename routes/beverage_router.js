@@ -24,7 +24,7 @@ router.post("/cart/:id", validateToken, cartController.cartController);
 router.get("/cart", validateToken, cartController.cartDataController);
 
 router.patch(
-  "/cart/:id/:amount",
+  "/cart/:id/:amount/:total_price",
   validateToken,
   cartController.cartModifyController
 );

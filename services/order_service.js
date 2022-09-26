@@ -32,11 +32,9 @@ const orderToppingsService = async (userId, beverageId, toppings) => {
   }
 };
 const orderDataWithOutToppingService = async (userId, beverageId) => {
-  const [orderData] = await orderDao.getOrderDataWithoutTopping(
-    userId,
-    beverageId
-  );
-  if (!orderData.toppingData.topping_id) {
+  const [orderData] = await orderDao.getOrderData(userId, beverageId);
+  console.log(orderData);
+  if (!orderData.toppingData[0].id) {
     orderData.toppingData = [];
   }
   return orderData;

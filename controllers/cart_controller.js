@@ -56,8 +56,9 @@ const cartModifyController = async (req, res) => {
   const userId = req.userData.id;
   const orderId = req.params.id;
   const amount = req.params.amount;
+  const totalPrice = req.params.total_price;
   try {
-    await cartService.cartModifyService(userId, orderId, amount);
+    await cartService.cartModifyService(userId, orderId, amount, totalPrice);
     res.status(200).json({ message: "completed Modify" });
   } catch (err) {
     console.log(err);

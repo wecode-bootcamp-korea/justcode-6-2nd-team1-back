@@ -79,11 +79,11 @@ const getCartDataByUserId = async (userId) => {
   );
 };
 
-const modifyCart = async (userId, orderId, amount) => {
+const modifyCart = async (userId, orderId, amount, totalPrice) => {
   await myDataSource.query(
-    `UPDATE orders SET amount = ? WHERE id = ? AND user_id = ?;
+    `UPDATE orders SET amount = ?, total_price = ? WHERE id = ? AND user_id = ?;
     `,
-    [amount, orderId, userId]
+    [amount, totalPrice, orderId, userId]
   );
 };
 

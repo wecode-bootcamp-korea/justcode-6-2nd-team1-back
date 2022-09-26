@@ -1,10 +1,10 @@
 const { myDataSource } = require("./common");
 
-const modifyCartOrderStatusByUserId = async (userId) => {
+const modifyCartOrderStatusByOrderId = async (orderId) => {
   await myDataSource.query(
-    `UPDATE orders SET order_status_id = 2 WHERE user_id = ?;
+    `UPDATE orders SET order_status_id = 2 WHERE id = ?;
     `,
-    [userId]
+    [orderId.id]
   );
 };
 
@@ -12,12 +12,10 @@ const getCartUserDataByUserId = async (userId) => {
   return await myDataSource.query(
     `SELECT 
         users.name as userName, users.phone_number, shops.name as shopName,
-        shops.address,orders.take_out,
-        users.point
-      FROM orders
-      JOIN users ON orders.user_id = users.id
+        shops.address,users.point
+      FROM users
       JOIN shops ON users.shop_location_id = shops.id
-      WHERE orders.user_id=? limit 1;
+      WHERE users.id = ? limit 1;
     `,
     [userId]
   );
@@ -58,20 +56,36 @@ const getCartTotalPrice = async (userId) => {
   );
 };
 
-const modifyCartOrderUserPoint = async (userId, totalPrice) => {
+const modifyCartOrderUserPoint = async (userId) => {
+  const [totalPrice] = await myDataSource.query(
+    `SELECT SUM(total_price) as totalPrice
+      FROM orders
+      WHERE user_id = ? AND order_status_id = 2
+    `,
+    [userId]
+  );
+
+  const [userPoint] = await myDataSource.query(
+    `SELECT point FROM users WHERE id = ?
+    `,
+    [userId]
+  );
+
+  if (userPoint.point < totalPrice.totalPrice) {
+    const err = new Error("point not enough");
+    err.statusCode = 400;
+    throw err;
+  }
+
   const [point] = await myDataSource.query(
     `
     SELECT point - ? as result 
     FROM users 
     WHERE id = ?
     `,
-    [totalPrice, userId]
+    [totalPrice.totalPrice, userId]
   );
-  if (point.result < totalPrice) {
-    const err = new Error("point not enough");
-    err.statusCode = 400;
-    throw err;
-  }
+
   await myDataSource.query(
     `UPDATE users SET point = ? WHERE id = ?
     `,
@@ -80,7 +94,7 @@ const modifyCartOrderUserPoint = async (userId, totalPrice) => {
 };
 
 module.exports = {
-  modifyCartOrderStatusByUserId,
+  modifyCartOrderStatusByOrderId,
   getCartUserDataByUserId,
   getBeverageDataByUserId,
   getCartTotalPrice,

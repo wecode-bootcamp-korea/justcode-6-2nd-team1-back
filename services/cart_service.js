@@ -44,8 +44,8 @@ const cartDataService = async (userId) => {
   return cartData;
 };
 
-const cartModifyService = async (userId, orderId, amount) => {
-  await cartDao.modifyCart(userId, orderId, amount);
+const cartModifyService = async (userId, orderId, amount, totalPrice) => {
+  await cartDao.modifyCart(userId, orderId, amount, totalPrice);
 };
 
 const cartDeleteService = async (userId, orderId) => {

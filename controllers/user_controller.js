@@ -22,6 +22,12 @@ const accountCheck = async (req, res) => {
 
 const signUpController = async (req, res) => {
   let { email, password, nickname, name, phoneNumber } = req.body;
+
+  if (!(email && password && nickname && name && phoneNumber)) {
+    res.status(400 || 500).json({ message: "CHECK NECESSARY INPUT DATA" });
+    return;
+  }
+
   try {
     await userService.signUpService(
       email,
@@ -62,6 +68,7 @@ const userLocationController = async (req, res) => {
     res.status(err.statusCode).json(err.message);
   }
 };
+
 module.exports = {
   accountCheck,
   signUpController,
