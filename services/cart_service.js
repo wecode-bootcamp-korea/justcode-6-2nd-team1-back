@@ -23,7 +23,7 @@ const cartService = async (
 };
 
 const cartToppingService = async (userId, beverageId, toppings) => {
-  if (!toppings) {
+  if (!toppings.length) {
     await cartDao.createCartNullToppings(userId, beverageId);
   } else {
     for (let i = 0; i < toppings.length; i++) {

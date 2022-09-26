@@ -69,7 +69,8 @@ const getOrderData = async (userId, beverageId) => {
     JOIN users ON orders.user_id = users.id
     JOIN beverages ON orders.beverage_id = beverages.id
     JOIN shops ON users.shop_location_id = shops.id
-    WHERE orders.user_id=? AND orders.beverage_id =? AND orders.order_status_id = 2;
+    WHERE orders.user_id=? AND orders.beverage_id =? AND orders.order_status_id = 2
+    order by orders.id desc limit 1;
     `,
     [userId, beverageId, userId, beverageId]
   );

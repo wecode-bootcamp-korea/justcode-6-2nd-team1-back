@@ -3,7 +3,7 @@ const orderDao = require("../models/order_dao");
 
 const cartOrderService = async (userId, orderId) => {
   for (let i in orderId) {
-    await cartOrderDao.modifyCartOrderStatusByOrderId(orderId[i]);
+    await cartOrderDao.modifyCartOrderStatusByOrderId(orderId[i].id);
   }
   const [userData] = await cartOrderDao.getCartUserDataByUserId(userId);
   const beverageData = await cartOrderDao.getBeverageDataByUserId(userId);

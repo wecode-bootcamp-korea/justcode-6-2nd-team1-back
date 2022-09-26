@@ -4,7 +4,7 @@ const modifyCartOrderStatusByOrderId = async (orderId) => {
   await myDataSource.query(
     `UPDATE orders SET order_status_id = 2 WHERE id = ?;
     `,
-    [orderId.id]
+    [orderId]
   );
 };
 

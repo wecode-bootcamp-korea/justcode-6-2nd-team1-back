@@ -1,4 +1,5 @@
 const orderService = require("../services/order_service");
+const commonDao = require("../models/common");
 
 const orderController = async (req, res) => {
   const beverageId = req.params.id;
@@ -48,7 +49,12 @@ const orderController = async (req, res) => {
 const paymentController = async (req, res) => {
   const userId = req.userData.id;
   const orderId = req.params.id;
+  console.log(orderId);
   try {
+    if (!orderId) {
+      res.status(400).json({ message: "invalid orderId" });
+      return;
+    }
     await orderService.paymentService(userId, orderId);
     res.status(200).json({ message: "completed Payment" });
   } catch (err) {

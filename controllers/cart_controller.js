@@ -5,7 +5,7 @@ const cartController = async (req, res) => {
   const beverageId = req.params.id;
   const { amount, cold, totalPrice, takeOut, sugar, ice, toppings } = req.body;
   try {
-    if (!toppings) {
+    if (!toppings.length) {
       await cartService.cartService(
         userId,
         beverageId,
