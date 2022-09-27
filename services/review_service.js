@@ -1,7 +1,7 @@
 const reviewDao = require("../models/review_dao");
 
-const reviewService = async (userId, beverageId, content) => {
-  await reviewDao.createReview(userId, beverageId, content);
+const reviewService = async (userId, beverageId, content, score) => {
+  await reviewDao.createReview(userId, beverageId, content, score);
 };
 
 const GetReviewService = async (beverageId) => {

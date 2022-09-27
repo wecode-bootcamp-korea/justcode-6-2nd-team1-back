@@ -3,10 +3,10 @@ const reviewService = require("../services/review_service");
 const reviewController = async (req, res) => {
   const userId = req.userData.id;
   const beverageId = req.params.id;
-  const { content } = req.body;
+  const { content, score } = req.body;
 
   try {
-    await reviewService.reviewService(userId, beverageId, content);
+    await reviewService.reviewService(userId, beverageId, content, score);
     res.status(200).json({ message: "review created" });
   } catch (err) {
     console.log(err);

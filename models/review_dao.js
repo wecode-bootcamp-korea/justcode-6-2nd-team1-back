@@ -1,6 +1,6 @@
 const { myDataSource } = require("./common");
 
-const createReview = async (userId, beverageId, content) => {
+const createReview = async (userId, beverageId, content, score) => {
   const [checkPay] = await myDataSource.query(
     `SELECT order_status_id 
       FROM orders
@@ -17,17 +17,17 @@ const createReview = async (userId, beverageId, content) => {
     throw err;
   } else {
     await myDataSource.query(
-      `INSERT INTO reviews (user_id,beverage_id,content) 
-      VALUES (?,?,?)
+      `INSERT INTO reviews (user_id,beverage_id,content,score) 
+      VALUES (?,?,?,?)
     `,
-      [userId, beverageId, content]
+      [userId, beverageId, content, score]
     );
   }
 };
 
 const getReview = async (beverageId) => {
   return await myDataSource.query(
-    `SELECT reviews.id,users.nickname,content,reviews.created_at FROM reviews 
+    `SELECT reviews.id,users.nickname,content,score,reviews.created_at FROM reviews 
       JOIN users ON users.id = reviews.user_id
       WHERE beverage_id = ?
       ORDER BY reviews.created_at desc;
