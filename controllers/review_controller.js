@@ -5,6 +5,11 @@ const reviewController = async (req, res) => {
   const beverageId = req.params.id;
   const { content, score } = req.body;
 
+  if (!(userId && beverageId && content && score)) {
+    res.status(400).json({ message: "check Input data" });
+    return;
+  }
+
   try {
     await reviewService.reviewService(userId, beverageId, content, score);
     res.status(200).json({ message: "review created" });

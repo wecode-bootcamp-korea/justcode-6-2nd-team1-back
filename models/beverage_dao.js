@@ -19,6 +19,7 @@ const getDetailDataById = async (beverageId) => {
     `,
     [beverageId, beverageId]
   );
+
   return detailData;
 };
 

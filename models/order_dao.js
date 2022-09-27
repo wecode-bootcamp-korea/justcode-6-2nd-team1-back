@@ -85,6 +85,11 @@ const modifyUserPoint = async (userId, orderId) => {
     `,
     [orderId]
   );
+  if (!totalPrice) {
+    const err = new Error("point Not enough");
+    err.statusCode = 400;
+    throw err;
+  }
 
   const [userPoint] = await myDataSource.query(
     `SELECT point FROM users WHERE id = ?

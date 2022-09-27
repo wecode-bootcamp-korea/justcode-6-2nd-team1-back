@@ -49,7 +49,9 @@ const cartModifyService = async (userId, orderId, amount, totalPrice) => {
 };
 
 const cartDeleteService = async (userId, orderId) => {
-  await cartDao.deleteCart(userId, orderId);
+  for (let i in orderId) {
+    await cartDao.deleteCart(userId, orderId[i]);
+  }
 };
 
 module.exports = {

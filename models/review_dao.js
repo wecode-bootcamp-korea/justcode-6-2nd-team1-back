@@ -2,7 +2,7 @@ const { myDataSource } = require("./common");
 
 const createReview = async (userId, beverageId, content, score) => {
   const [checkPay] = await myDataSource.query(
-    `SELECT order_status_id 
+    `SELECT order_status_id
       FROM orders
       JOIN users ON users.id = orders.user_id
       JOIN beverages ON beverages.id = orders.beverage_id

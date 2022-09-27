@@ -29,7 +29,7 @@ router.patch(
   cartController.cartModifyController
 );
 
-router.delete("/cart/:id", validateToken, cartController.cartDeleteController);
+router.post("/delete_cart", validateToken, cartController.cartDeleteController);
 
 router.post(
   "/cartOrder",

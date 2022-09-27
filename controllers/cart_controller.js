@@ -68,8 +68,11 @@ const cartModifyController = async (req, res) => {
 
 const cartDeleteController = async (req, res) => {
   const userId = req.userData.id;
-  const orderId = req.params.id;
-
+  const orderId = req.body.id;
+  if (!orderId.length) {
+    res.status(400).json({ message: "Check orderId" });
+    return;
+  }
   try {
     await cartService.cartDeleteService(userId, orderId);
     res.status(200).json({ message: "deleted" });
