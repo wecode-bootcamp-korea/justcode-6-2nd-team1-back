@@ -58,11 +58,33 @@ const logInController = async (req, res) => {
 
 const userLocationController = async (req, res) => {
   const userId = req.userData.id;
-  const locationId = req.params.id;
-
+  const latitude = req.params.latitude;
+  const longitude = req.params.longitude;
   try {
-    await userService.userLocationService(userId, locationId);
-    res.status(200).json({ message: "success" });
+    const closestShop = await userService.userLocationService(
+      userId,
+      latitude,
+      longitude
+    );
+    res.status(200).json({ closestShop });
+  } catch (err) {
+    console.log(err);
+    res.status(err.statusCode).json(err.message);
+  }
+};
+
+const shopMatchingController = async (req, res) => {
+  const userId = req.userData.id;
+  const shopId = req.body.id;
+  const { latitude, longitude } = req.body;
+  try {
+    const shop = await userService.shopMatchingService(
+      userId,
+      shopId,
+      latitude,
+      longitude
+    );
+    res.status(200).json(shop);
   } catch (err) {
     console.log(err);
     res.status(err.statusCode).json(err.message);
@@ -74,4 +96,5 @@ module.exports = {
   signUpController,
   logInController,
   userLocationController,
+  shopMatchingController,
 };

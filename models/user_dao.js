@@ -51,19 +51,48 @@ const getUserByEmail = async (email) => {
   return userData;
 };
 
-const ModifyUserLocation = async (userId, locationId) => {
+const getShopLocation = async (userId, latitude, longitude) => {
+  const closestShop = await myDataSource.query(
+    `SELECT
+    shops.id,shops.name,
+    (6371*acos(cos(radians(?))*cos(radians(latitude))*cos(radians(longitude)
+    -radians(?))+sin(radians(?))*sin(radians(latitude))))
+    AS distance
+    FROM shops
+    HAVING distance < 2
+    ORDER BY distance;
+    `,
+    [latitude, longitude, latitude]
+  );
+  return closestShop;
+};
+
+const modifyUserLocation = async (userId, shopId, latitude, longitude) => {
   await myDataSource.query(
-    `UPDATE users 
-     SET shop_location_id = ? 
+    `UPDATE users
+     SET shop_location_id = ?
      WHERE id = ?
     `,
-    [locationId, userId]
+    [shopId, userId]
   );
+
+  const shop = await myDataSource.query(
+    `SELECT
+    shops.id,shops.name,
+    (6371*acos(cos(radians(?))*cos(radians(latitude))*cos(radians(longitude)
+    -radians(?))+sin(radians(?))*sin(radians(latitude))))
+    AS distance
+    FROM shops WHERE shops.id = ?;
+    `,
+    [latitude, longitude, latitude, shopId]
+  );
+  return shop;
 };
 module.exports = {
   getAccountData,
   createUser,
   getUserById,
   getUserByEmail,
-  ModifyUserLocation,
+  getShopLocation,
+  modifyUserLocation,
 };

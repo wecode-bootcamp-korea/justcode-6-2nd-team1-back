@@ -13,10 +13,15 @@ router.get(
   validateToken,
   orderListController.orderListController
 );
-router.patch(
-  "/user_location/:id",
+router.get(
+  "/user_location/:latitude/:longitude",
   validateToken,
   userController.userLocationController
+);
+router.patch(
+  "/user_location",
+  validateToken,
+  userController.shopMatchingController
 );
 
 module.exports = router;

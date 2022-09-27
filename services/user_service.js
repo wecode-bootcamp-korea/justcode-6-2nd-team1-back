@@ -30,8 +30,12 @@ const logInService = async (email, password) => {
   }
 };
 
-const userLocationService = async (userId, locationId) => {
-  await userDao.ModifyUserLocation(userId, locationId);
+const userLocationService = async (userId, latitude, longitude) => {
+  return await userDao.getShopLocation(userId, latitude, longitude);
+};
+
+const shopMatchingService = async (userId, shopId, latitude, longitude) => {
+  return await userDao.modifyUserLocation(userId, shopId, latitude, longitude);
 };
 
 module.exports = {
@@ -39,4 +43,5 @@ module.exports = {
   signUpService,
   logInService,
   userLocationService,
+  shopMatchingService,
 };
