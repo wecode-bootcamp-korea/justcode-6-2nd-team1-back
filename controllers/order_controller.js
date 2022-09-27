@@ -6,8 +6,7 @@ const orderController = async (req, res) => {
   const userId = req.userData.id;
   let { amount, cold, totalPrice, takeOut, sugar, ice, toppings } = req.body;
   try {
-    if (!toppings) {
-      toppings = null;
+    if (!toppings.length) {
       await orderService.orderService(
         userId,
         beverageId,
@@ -49,9 +48,9 @@ const orderController = async (req, res) => {
 const paymentController = async (req, res) => {
   const userId = req.userData.id;
   const orderId = req.params.id;
-  console.log(orderId);
   try {
-    if (!orderId) {
+    const [orderCheck] = await orderService.orderCheckService(userId, orderId);
+    if (!orderCheck) {
       res.status(400).json({ message: "invalid orderId" });
       return;
     }
@@ -65,7 +64,7 @@ const paymentController = async (req, res) => {
 
 const orderCancelController = async (req, res) => {
   const userId = req.userData.id;
-  const orderId = req.params.id;
+  const orderId = req.body.id;
 
   try {
     await orderService.orderCancelService(userId, orderId);

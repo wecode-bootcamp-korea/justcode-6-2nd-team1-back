@@ -23,7 +23,7 @@ const orderService = async (
 };
 
 const orderToppingsService = async (userId, beverageId, toppings) => {
-  if (!toppings) {
+  if (!toppings.length) {
     await orderDao.createToppingsNull(userId, beverageId);
   } else {
     for (let i = 0; i < toppings.length; i++) {
@@ -33,7 +33,6 @@ const orderToppingsService = async (userId, beverageId, toppings) => {
 };
 const orderDataWithOutToppingService = async (userId, beverageId) => {
   const [orderData] = await orderDao.getOrderData(userId, beverageId);
-  console.log(orderData);
   if (!orderData.toppingData[0].id) {
     orderData.toppingData = [];
   }
@@ -51,6 +50,10 @@ const paymentService = async (userId, orderId) => {
   await orderDao.modifyOrderStatus(orderId);
 };
 
+const orderCheckService = async (userId, orderId) => {
+  return await orderDao.getOrderCheck(userId, orderId);
+};
+
 const orderCancelService = async (userId, orderId) => {
   await orderDao.modifyCancelOrder(userId, orderId);
 };
@@ -60,6 +63,7 @@ module.exports = {
   orderToppingsService,
   orderDataService,
   orderDataWithOutToppingService,
+  orderCheckService,
   paymentService,
   orderCancelService,
 };

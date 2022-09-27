@@ -54,7 +54,7 @@ router.delete(
 );
 
 router.patch(
-  "/order_cancel/:id",
+  "/order_cancel",
   validateToken,
   orderController.orderCancelController
 );

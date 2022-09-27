@@ -21,7 +21,8 @@ const createOrder = async (
 
 const createToppingsNull = async (userId, beverageId) => {
   const [orderId] = await myDataSource.query(
-    `SELECT id from orders WHERE user_id = ? AND beverage_id = ? AND order_status_id = 2;
+    `SELECT id from orders WHERE user_id = ? AND beverage_id = ? AND order_status_id = 2
+    ORDER BY orders.id desc limit 1;
     `,
     [userId, beverageId]
   );
@@ -32,11 +33,20 @@ const createToppingsNull = async (userId, beverageId) => {
     `,
     [orderId.id]
   );
+
+  setTimeout(() => {
+    myDataSource.query(
+      `DELETE FROM orders WHERE id = ? 
+      `,
+      [orderId.id]
+    );
+  }, 60000);
 };
 
 const createToppings = async (userId, beverageId, toppings) => {
   const [orderId] = await myDataSource.query(
-    `SELECT id from orders WHERE user_id = ? AND beverage_id = ? AND order_status_id = 2;
+    `SELECT id from orders WHERE user_id = ? AND beverage_id = ? AND order_status_id = 2
+     ORDER BY orders.id desc limit 1;
     `,
     [userId, beverageId]
   );
@@ -47,6 +57,14 @@ const createToppings = async (userId, beverageId, toppings) => {
     `,
     [orderId.id, toppings.id, toppings.amount]
   );
+
+  setTimeout(() => {
+    myDataSource.query(
+      `DELETE FROM orders WHERE id = ? 
+      `,
+      [orderId.id]
+    );
+  }, 60000);
 };
 
 const getOrderData = async (userId, beverageId) => {
@@ -70,11 +88,20 @@ const getOrderData = async (userId, beverageId) => {
     JOIN beverages ON orders.beverage_id = beverages.id
     JOIN shops ON users.shop_location_id = shops.id
     WHERE orders.user_id=? AND orders.beverage_id =? AND orders.order_status_id = 2
-    order by orders.id desc limit 1;
+    ORDER BY orders.id desc limit 1;
     `,
     [userId, beverageId, userId, beverageId]
   );
   return orderData;
+};
+
+const getOrderCheck = async (userId, orderId) => {
+  const orderCheck = await myDataSource.query(
+    `SELECT id FROM orders WHERE orders.user_id = ? AND orders.id = ?;
+    `,
+    [userId, orderId]
+  );
+  return orderCheck;
 };
 
 const modifyUserPoint = async (userId, orderId) => {
@@ -85,11 +112,6 @@ const modifyUserPoint = async (userId, orderId) => {
     `,
     [orderId]
   );
-  if (!totalPrice) {
-    const err = new Error("point Not enough");
-    err.statusCode = 400;
-    throw err;
-  }
 
   const [userPoint] = await myDataSource.query(
     `SELECT point FROM users WHERE id = ?
@@ -167,6 +189,7 @@ module.exports = {
   createToppingsNull,
   getOrderData,
   modifyOrderStatus,
+  getOrderCheck,
   modifyUserPoint,
   modifyCancelOrder,
 };
