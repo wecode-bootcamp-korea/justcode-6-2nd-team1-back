@@ -88,6 +88,15 @@ const modifyUserLocation = async (userId, shopId, latitude, longitude) => {
   );
   return shop;
 };
+
+const createKakaoUser = async (email, nickname) => {
+  await myDataSource.query(
+    `INSERT INTO users (email,nickname,name,phone_number,point) 
+      VALUES (?,?,?,"KAKAO",30000);
+    `,
+    [email, nickname, nickname]
+  );
+};
 module.exports = {
   getAccountData,
   createUser,
@@ -95,4 +104,5 @@ module.exports = {
   getUserByEmail,
   getShopLocation,
   modifyUserLocation,
+  createKakaoUser,
 };

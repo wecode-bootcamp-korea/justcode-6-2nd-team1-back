@@ -3,6 +3,13 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { AUTH_ACCESS_SECRET } = process.env;
 
+const accessToken = (id) => {
+  const token = jwt.sign({ userId: id }, AUTH_ACCESS_SECRET, {
+    expiresIn: "6h",
+  });
+  return token;
+};
+
 const accountCheck = async (email) => {
   await userDao.getAccountData(email);
 };
@@ -23,10 +30,7 @@ const logInService = async (email, password) => {
     err.statusCode = 400;
     throw err;
   } else {
-    const accessToken = jwt.sign({ userId: user.id }, AUTH_ACCESS_SECRET, {
-      expiresIn: "6h",
-    });
-    return accessToken;
+    return accessToken(user.id);
   }
 };
 
@@ -38,10 +42,22 @@ const shopMatchingService = async (userId, shopId, latitude, longitude) => {
   return await userDao.modifyUserLocation(userId, shopId, latitude, longitude);
 };
 
+const kakaoLoginService = async (email, nickname) => {
+  const [userCheck] = await userDao.getUserByEmail(email);
+  if (!userCheck) {
+    await userDao.createKakaoUser(email, nickname);
+    const userData = await userDao.getUserByEmail(email);
+    return accessToken(userData.id);
+  } else {
+    return accessToken(userCheck.id);
+  }
+};
+
 module.exports = {
   accountCheck,
   signUpService,
   logInService,
   userLocationService,
   shopMatchingService,
+  kakaoLoginService,
 };

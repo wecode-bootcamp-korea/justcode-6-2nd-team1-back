@@ -23,7 +23,7 @@ const orderService = async (
 };
 
 const orderToppingsService = async (userId, beverageId, toppings) => {
-  if (!toppings.length) {
+  if (!toppings) {
     await orderDao.createToppingsNull(userId, beverageId);
   } else {
     for (let i = 0; i < toppings.length; i++) {

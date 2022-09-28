@@ -44,11 +44,19 @@ const deleteReview = async (userId, reviewId) => {
     `,
     [reviewId]
   );
+
+  if (!userCheck) {
+    const err = new Error("not exist review");
+    err.statusCode = 400;
+    throw err;
+  }
+
   if (userCheck.user_id !== userId) {
     const err = new Error("Unauthorized users");
     err.statusCode = 400;
     throw err;
   }
+
   await myDataSource.query(
     `DELETE FROM reviews WHERE id = ?;
     `,

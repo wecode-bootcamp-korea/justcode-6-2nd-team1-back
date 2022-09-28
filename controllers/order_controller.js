@@ -1,5 +1,4 @@
 const orderService = require("../services/order_service");
-const commonDao = require("../models/common");
 
 const orderController = async (req, res) => {
   const beverageId = req.params.id;
@@ -7,6 +6,7 @@ const orderController = async (req, res) => {
   let { amount, cold, totalPrice, takeOut, sugar, ice, toppings } = req.body;
   try {
     if (!toppings.length) {
+      toppings = null;
       await orderService.orderService(
         userId,
         beverageId,

@@ -1,4 +1,5 @@
 const userService = require("../services/user_service");
+const axios = require("axios");
 
 const accountCheck = async (req, res) => {
   const { email } = req.query;
@@ -46,6 +47,10 @@ const signUpController = async (req, res) => {
 
 const logInController = async (req, res) => {
   const { email, password } = req.body;
+  if (!(email && password)) {
+    res.status(400).json({ message: "check input data" });
+    return;
+  }
 
   try {
     const token = await userService.logInService(email, password);
@@ -61,12 +66,12 @@ const userLocationController = async (req, res) => {
   const latitude = req.params.latitude;
   const longitude = req.params.longitude;
   try {
-    const closestShop = await userService.userLocationService(
+    const closestShops = await userService.userLocationService(
       userId,
       latitude,
       longitude
     );
-    res.status(200).json({ closestShop });
+    res.status(200).json({ closestShops });
   } catch (err) {
     console.log(err);
     res.status(err.statusCode).json(err.message);
@@ -91,10 +96,35 @@ const shopMatchingController = async (req, res) => {
   }
 };
 
+const kakaoLogin = async (req, res) => {
+  const kakaoToken = req.body.token;
+
+  if (!kakaoToken) {
+    res.status(400).json({ message: "this access token does not exist" });
+    return;
+  }
+
+  try {
+    const { data } = await axios.get("https://kapi.kakao.com/v2/user/me", {
+      headers: { Authorization: `Bearer ${kakaoToken}` },
+    });
+
+    const nickname = data.properties.nickname;
+    const email = data.kakao_account.email;
+
+    const token = await userService.kakaoLoginService(email, nickname);
+
+    res.status(200).json({ message: "Success", token });
+  } catch (err) {
+    console.log(err);
+    res.status(err.statusCode).json(err.message);
+  }
+};
 module.exports = {
   accountCheck,
   signUpController,
   logInController,
   userLocationController,
   shopMatchingController,
+  kakaoLogin,
 };

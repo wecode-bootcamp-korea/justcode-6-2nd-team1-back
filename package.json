@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/wecode-bootcamp-korea/justcode-6-2nd-team1-back#readme",
   "dependencies": {
+    "axios": "^0.27.2",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dbmate": "^1.0.3",
