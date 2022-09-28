@@ -96,7 +96,7 @@ const shopMatchingController = async (req, res) => {
   }
 };
 
-const kakaoLogin = async (req, res) => {
+const kakaoLoginController = async (req, res) => {
   const kakaoToken = req.body.token;
 
   if (!kakaoToken) {
@@ -120,11 +120,34 @@ const kakaoLogin = async (req, res) => {
     res.status(err.statusCode).json(err.message);
   }
 };
+
+const naverLoginController = async (req, res) => {
+  const naverToken = req.body.token;
+
+  if (!naverToken) {
+    res.status(400).json({ message: "this access token does not exist" });
+    return;
+  }
+
+  try {
+    const { data } = await axios.get("https://kapi.kakao.com/v2/user/me", {
+      headers: { Authorization: `Bearer ${kakaoToken}` },
+    });
+
+    const token = await userService.naverLoginService(data);
+
+    res.status(200).json({ message: "success", token });
+  } catch (err) {
+    console.log(err);
+    res.status(err.statusCode).json(err.message);
+  }
+};
 module.exports = {
   accountCheck,
   signUpController,
   logInController,
   userLocationController,
   shopMatchingController,
-  kakaoLogin,
+  kakaoLoginController,
+  naverLoginController,
 };

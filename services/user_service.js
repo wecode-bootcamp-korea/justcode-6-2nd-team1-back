@@ -24,6 +24,11 @@ const signUpService = async (email, password, nickname, name, phoneNumber) => {
 
 const logInService = async (email, password) => {
   const [user] = await userDao.getUserByEmail(email);
+  if (!user) {
+    const err = new Error("Not exist user");
+    err.statusCode = 400;
+    throw err;
+  }
   const comparePassword = bcrypt.compareSync(password, user.password);
   if (comparePassword === false) {
     const err = new Error("login failed");
@@ -53,6 +58,17 @@ const kakaoLoginService = async (email, nickname) => {
   }
 };
 
+const naverLoginService = async (data) => {
+  const [userCheck] = await userDao.getUserByEmail(data.email);
+  if (!userCheck) {
+    await userDao.createNaverUser(data);
+    const userData = await userDao.getUserByEmail(data.email);
+    return accessToken(userData.id);
+  } else {
+    return accessToken(userCheck.id);
+  }
+};
+
 module.exports = {
   accountCheck,
   signUpService,
@@ -60,4 +76,5 @@ module.exports = {
   userLocationService,
   shopMatchingService,
   kakaoLoginService,
+  naverLoginService,
 };

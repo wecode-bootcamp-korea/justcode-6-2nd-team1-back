@@ -97,6 +97,15 @@ const createKakaoUser = async (email, nickname) => {
     [email, nickname, nickname]
   );
 };
+
+const createNaverUser = async (data) => {
+  await myDataSource.query(
+    `INSERT INTO users (email,nickname,name,phone_number,point) 
+    VALUES (?,?,?,"NAVER",30000);
+    `,
+    [data.email, data.nickname, data.name]
+  );
+};
 module.exports = {
   getAccountData,
   createUser,
@@ -105,4 +114,5 @@ module.exports = {
   getShopLocation,
   modifyUserLocation,
   createKakaoUser,
+  createNaverUser,
 };

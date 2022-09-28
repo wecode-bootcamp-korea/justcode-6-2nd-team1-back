@@ -10,6 +10,7 @@ const router = express.Router();
 router.use("/users", userRouter);
 router.use("/beverages", beverageRouter);
 router.use("/shops", shopRouter);
-router.post("/kakaologin", userController.kakaoLogin);
+router.post("/kakaologin", userController.kakaoLoginController);
+router.post("/naverlogin", userController.naverLoginController);
 
 module.exports = router;
