@@ -34,12 +34,21 @@ const createToppingsNull = async (userId, beverageId) => {
     [orderId.id]
   );
 
-  setTimeout(() => {
-    myDataSource.query(
-      `DELETE FROM orders WHERE id = ? 
+  setTimeout(async () => {
+    const [statusId] = await myDataSource.query(
+      `SELECT id,order_status_id as statusId from orders WHERE user_id = ? AND beverage_id = ? AND order_status_id = 2;
       `,
-      [orderId.id]
+      [userId, beverageId]
     );
+    if (!statusId) {
+      return;
+    } else if (statusId.statusId === 2) {
+      myDataSource.query(
+        `DELETE FROM orders WHERE id = ?
+            `,
+        [statusId.id]
+      );
+    }
   }, 60000);
 };
 
@@ -58,16 +67,32 @@ const createToppings = async (userId, beverageId, toppings) => {
     [orderId.id, toppings.id, toppings.amount]
   );
 
-  setTimeout(() => {
-    myDataSource.query(
-      `DELETE FROM orders WHERE id = ? 
+  setTimeout(async () => {
+    const [statusId] = await myDataSource.query(
+      `SELECT id,order_status_id as statusId from orders WHERE user_id = ? AND beverage_id = ? AND order_status_id = 2;
       `,
-      [orderId.id]
+      [userId, beverageId]
     );
+    if (!statusId) {
+      return;
+    } else if (statusId.statusId === 2) {
+      myDataSource.query(
+        `DELETE FROM orders WHERE id = ?
+            `,
+        [statusId.id]
+      );
+    }
   }, 60000);
 };
 
 const getOrderData = async (userId, beverageId) => {
+  const [orderId] = await myDataSource.query(
+    `SELECT id from orders WHERE user_id = ? AND beverage_id = ? AND order_status_id = 2
+     ORDER BY orders.id desc limit 1;
+    `,
+    [userId, beverageId]
+  );
+
   const orderData = await myDataSource.query(
     `SELECT 
       orders.id as orderId, users.name as userName, users.phone_number, shops.name as shopName,
@@ -80,8 +105,8 @@ const getOrderData = async (userId, beverageId) => {
         (SELECT 
           json_arrayagg(json_object("topping_id",topping_id,"amount",topping_order.amount))
         FROM topping_order
-        JOIN orders ON orders.user_id = ? AND orders.beverage_id = ?
-        WHERE orders.id = topping_order.order_id) as toppingData,
+        JOIN orders ON orders.id = topping_order.order_id
+        WHERE orders.id = ?) as toppingData,
         orders.total_price
     FROM orders
     JOIN users ON orders.user_id = users.id
@@ -90,7 +115,7 @@ const getOrderData = async (userId, beverageId) => {
     WHERE orders.user_id=? AND orders.beverage_id =? AND orders.order_status_id = 2
     ORDER BY orders.id desc limit 1;
     `,
-    [userId, beverageId, userId, beverageId]
+    [orderId.id, userId, beverageId]
   );
   return orderData;
 };

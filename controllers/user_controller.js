@@ -100,7 +100,7 @@ const kakaoLoginController = async (req, res) => {
   const kakaoToken = req.body.token;
 
   if (!kakaoToken) {
-    res.status(400).json({ message: "this access token does not exist" });
+    res.status(400).json({ message: "Invalid access token" });
     return;
   }
 
